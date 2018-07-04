@@ -2,7 +2,7 @@
 import pdb, traceback, os
 import datetime,time
 
-from tl_logger import TLLog
+from .tl_logger import TLLog
 log = TLLog.getLogger( 'menu' )
 
 class InputException(Exception):
@@ -82,7 +82,7 @@ class Menu(object):
       try:
         if self.showCmds: 
           self.updateHeader()
-          print '\nCommands available:\t%s' % (self.header)
+          print('\nCommands available:\t%s' % (self.header))
           lstMI = self.lstMenuItems + self._lstBuiltInMenuItems
           for mn in lstMI:
             if mn.cmd == '' and mn.command == '':
@@ -90,9 +90,9 @@ class Menu(object):
             else:
               cnt = self._menuSize - len(mn.command)
               s   = cnt*'.'
-            print '  %-3s %s  %s  %s' % (mn.cmd, mn.command, s,mn.desc)
+            print('  %-3s %s  %s  %s' % (mn.cmd, mn.command, s,mn.desc))
           self.showCmds = False
-          print
+          print()
 
         if self.bRepeatCommand:
           if kbhit():
@@ -102,7 +102,7 @@ class Menu(object):
             # delay one second
             time.sleep(1)
             curTime = datetime.datetime.now()
-            print curTime.strftime( '%H:%M:%S' )
+            print(curTime.strftime( '%H:%M:%S' ))
 
         if not self.bRepeatCommand:
           if self._cmd_stack:
@@ -116,9 +116,9 @@ class Menu(object):
                 self._cmd_file = None 
               continue
             else:
-              print 'Command: < %s' % cmd
+              print('Command: < %s' % cmd)
           else:    
-            cmd = raw_input( "Command: ")
+            cmd = input( "Command: ")
           # Add support for double quotes in responses
           lst = cmd.split('"')
           if len(lst) > 1:
@@ -155,7 +155,7 @@ class Menu(object):
           if len(self.lstCmd) > 1 and self.lstCmd[1] == 'enable':
             self._pause_enabled = True
           if self._pause_enabled:
-            x = raw_input('Continue ? ')
+            x = input('Continue ? ')
             if x == 'x':
               self.shutdown()
               break
@@ -192,7 +192,7 @@ class Menu(object):
           delay = 1.0
           if len(self.lstCmd) > 1:
             delay = float(self.lstCmd[1])
-          print 'Sleeping for %f sec ...' % delay
+          print('Sleeping for %f sec ...' % delay)
           time.sleep(delay)
           continue
 
@@ -208,12 +208,12 @@ class Menu(object):
             mn.func()
             break
         else:
-          raise InputException, 'Unknown command "%s"' % self.lstCmd[0]
+          raise InputException('Unknown command "%s"' % self.lstCmd[0])
 
         self.postCommand()
 
-      except InputException,err:
-        print 'InputException:%s' % err
+      except InputException as err:
+        print('InputException:%s' % err)
         self.showCmds = True
         self.bRepeatCommand = False
         if self._cmd_file:
@@ -221,13 +221,13 @@ class Menu(object):
         if self._cmd_files:
           self._cmd_files = []
   
-      except Exception, err:
+      except Exception as err:
         s = '%s: %s' % (err.__class__.__name__, err)
-        log.error( s )
-        print s
-        print '-- traceback --'
+        log.error(s)
+        print(s)
+        print('-- traceback --')
         traceback.print_exc()
-        print
+        print()
         self.bRepeatCommand = False
         if self._cmd_file:
           self._cmd_file = None

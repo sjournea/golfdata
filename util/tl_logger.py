@@ -89,7 +89,7 @@ class TLLog(object):
     """ register the module and add to dctLogModules """
     lm = LogModule(name)
     log = lm.getLog()
-    if not TLLog._dctLoggers.has_key( name ):
+    if not name in TLLog._dctLoggers:
       #print 'getLogger() -- adding "%s"' % name
       log.propagate = False
       # add all of the log handlers
@@ -160,8 +160,8 @@ class TLLog(object):
         for lm in TLLog._dctLoggers.values():
           lm._log.removeHandler(TLLog._hdlMainFile)
 
-    except Exception,err:
-      print 'logFileOpen() fail - filename:\"%s\" - %s' % (filename, err)
+    except Exception as err:
+      print('logFileOpen() fail - filename:\"%s\" - %s' % (filename, err))
 
   @staticmethod
   def logFileClose(filename, log=None):
@@ -185,8 +185,8 @@ class TLLog(object):
       if log:
         log.info('Log file "%s" Closing' % filename) 
 
-    except Exception,err:
-      print 'logFileClose() fail - filename:\"%s\" - %s' % (filename, err)
+    except Exception as err:
+      print('logFileClose() fail - filename:\"%s\" - %s' % (filename, err))
 
   @staticmethod
   def isEnabled( name ):
@@ -233,12 +233,11 @@ def logOptions(lstLogEnable, showLogs=False, log=None):
   dctLogMods = TLLog._dctLoggers
   if showLogs:
     lst = dctLogMods.keys()
-    lst.sort()
     if log:
       log.info( 'Logs available - %s' % lst)
-    print 'Logs available:'
+    print('Logs available:')
     for name in lst:
-      print '  %s' % name
+      print('  %s' % name)
     sys.exit(-1)
 
   # enable logs 
