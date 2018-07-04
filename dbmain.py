@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """dbmain.py"""
 import logging
+import platform
+if platform.system() == 'Linux':
+  import readline
 import threading
 import traceback
 
@@ -8,6 +11,8 @@ from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
 import mongoengine as eng
+from db.db_mongoengine import DPlayer, Player
+from db.data.test_players import DBGolfPlayers
 
 TLLog.config('logs/dbmain.log', defLogLevel=logging.INFO )
 
@@ -19,11 +24,23 @@ class DBMenu(Menu):
     self.url = kwargs.get('url')
     self.database = kwargs.get('database')
     if self.database:
-      eng.connect(self.database)
+      self.db = eng.connect(self.database)
     super().__init__(cmdFile)
     # add menu items
-    self.addMenuItem( MenuItem( 'co', '<database>',        
-                                'connect to database.', self._dbConnect) )
+    self.addMenuItem( MenuItem( 'dbl', '<database>',        
+                                'list databases.', self._dbList) )
+    self.addMenuItem( MenuItem( 'dr', '<database>',        
+                                'drop database.', self._dbDrop) )
+    self.addMenuItem( MenuItem( 'plc', 'email,first_name,last_name,nick_name,handicap,gender',        
+                                'create a player.', self._playerCreate) )
+    self.addMenuItem( MenuItem( 'plr', '',        
+                                'retrieve a player.', self._playerRetrieve) )
+    self.addMenuItem( MenuItem( 'plu', 'email,first_name,last_name,nick_name,handicap,gender',        
+                                'update a player.', self._playerUpdate) )
+    self.addMenuItem( MenuItem( 'pld', 'email',        
+                                'detete a player.', self._playerDelete) )
+    self.addMenuItem( MenuItem( 'testdata', '<players|courses>',        
+                                'insert test data into database.', self._testData) )
     self.updateHeader()
 
   def updateHeader(self):
@@ -32,6 +49,37 @@ class DBMenu(Menu):
   def _dbConnect(self):
     self.database = self.lstCmd[1]
     eng.connect(self.database)
+
+  def _dbDrop(self):
+    self.db.drop_database(self.database)
+
+  def _dbList(self):
+    pass
+
+  def _playerCreate(self):
+    dct = {}
+    for arg in self.lstCmd[1:]:
+      lst = arg.split('=')
+      if len(lst) == 2:
+        dct[lst[0]] = lst[1]
+    player = Player(**dct)
+    player.save()
+  
+  def _testData(self):
+    for dct in DBGolfPlayers:
+      player = Player(**dct)
+      player.save()
+  
+  def _playerRetrieve(self):
+    for n,doc in enumerate(Player.objects):
+      player = DPlayer(doc)
+      print('  {:>3} {}'.format(n,player))
+
+  def _playerUpdate(self):
+    pass
+
+  def _playerDelete(self):
+    pass
 
 def main():
   DEF_LOG_ENABLE = 'dbmain'
