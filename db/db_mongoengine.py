@@ -149,3 +149,24 @@ class DCourse(Doc):
     return '{:<40} - {:>2} holes - {:>2} tees par:{}'.format(self.name, len(self.holes), len(
       self.tees), self.course_par())
 
+
+class Database(object):
+  def __init__(self, url, database):
+    self.url = url
+    self.database = database
+    self.db = None
+    if self.database:
+      self.connect()
+
+  def connect(self, database=None):
+    if database:
+      self.database = database
+    self.db = connect(self.database)
+
+class DBAdmin(Database):
+  """Database wrapper for golf admin objects."""
+
+  def remove(self, database=None):
+    """Delete a database."""
+    database = database if database else self.database
+    self.db.drop_database(database)

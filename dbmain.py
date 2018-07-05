@@ -13,6 +13,7 @@ from util.tl_logger import TLLog,logOptions
 from mongoengine import *
 from db.db_mongoengine import Player, Course, Tee, Hole
 from db.db_mongoengine import DPlayer, DCourse
+from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses
 
@@ -23,10 +24,9 @@ log = TLLog.getLogger('dbmain')
 class DBMenu(Menu):
   def __init__(self, **kwargs):
     cmdFile = kwargs.get('cmdFile')
-    self.url = kwargs.get('url')
-    self.database = kwargs.get('database')
-    if self.database:
-      self.db = connect(self.database)
+    url = kwargs.get('url')
+    database = kwargs.get('database')
+    self.db = DBAdmin(url, database)
     super().__init__(cmdFile)
     # add menu items
     self.addMenuItem( MenuItem( 'dbl', '<database>',        
@@ -56,14 +56,15 @@ class DBMenu(Menu):
     self.updateHeader()
 
   def updateHeader(self):
-    self.header = 'database url:{} - database:{}'.format(self.url, self.database)
+    self.header = 'database url:{} database:{}'.format(self.db.url, self.db.database)
 
   def _dbConnect(self):
     self.database = self.lstCmd[1]
     connect(self.database)
 
   def _dbDrop(self):
-    self.db.drop_database(self.database)
+    database = self.lstCmd[1] if len(self.lstCmd) > 1 else None
+    self.db.remove(database)
 
   def _dbList(self):
     pass
