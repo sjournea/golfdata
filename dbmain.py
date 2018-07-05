@@ -11,8 +11,10 @@ from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
 import mongoengine as eng
-from db.db_mongoengine import DPlayer, Player
+from db.db_mongoengine import Player, Course, Tee, Hole
+from db.db_mongoengine import DPlayer, DCourse
 from db.data.test_players import DBGolfPlayers
+from db.data.test_courses import DBGolfCourses
 
 TLLog.config('logs/dbmain.log', defLogLevel=logging.INFO )
 
@@ -39,6 +41,14 @@ class DBMenu(Menu):
                                 'update a player.', self._playerUpdate) )
     self.addMenuItem( MenuItem( 'pld', 'email',        
                                 'detete a player.', self._playerDelete) )
+    #self.addMenuItem( MenuItem( 'coc', 'email,first_name,last_name,nick_name,handicap,gender',        
+                                #'create a course.', self._courseCreate) )
+    self.addMenuItem( MenuItem( 'cor', '',        
+                                'retrieve a course.', self._courseRetrieve) )
+    #self.addMenuItem( MenuItem( 'cou', 'email,first_name,last_name,nick_name,handicap,gender',        
+                                #'update a course.', self._courseUpdate) )
+    self.addMenuItem( MenuItem( 'cod', 'email',        
+                                'detete a course.', self._courseDelete) )
     self.addMenuItem( MenuItem( 'testdata', '<players|courses>',        
                                 'insert test data into database.', self._testData) )
     self.updateHeader()
@@ -66,9 +76,18 @@ class DBMenu(Menu):
     player.save()
   
   def _testData(self):
-    for dct in DBGolfPlayers:
-      player = Player(**dct)
-      player.save()
+    if self.lstCmd[1] == 'players':
+      for dct in DBGolfPlayers:
+        player = Player(**dct)
+        player.save()
+    elif self.lstCmd[1] == 'courses':
+      for dct in DBGolfCourses:
+        holes = [Hole(par=gh['par'], handicap=gh['handicap'], num=n+1) for n,gh in enumerate(dct['holes'])]
+        tees = [Tee(gender=gt['gender'], name=gt['name'], rating=gt['rating'], slope=gt['slope']) for n,gt in enumerate(dct['tees'])]
+        course = Course(name=dct['name'], holes=holes, tees=tees)
+        course.save()
+    else:
+      raise InputException('only players or courses supported.')
   
   def _playerRetrieve(self):
     for n,doc in enumerate(Player.objects):
@@ -79,6 +98,14 @@ class DBMenu(Menu):
     pass
 
   def _playerDelete(self):
+    pass
+
+  def _courseRetrieve(self):
+    for n,doc in enumerate(Course.objects):
+      course = DCourse(doc)
+      print('  {:>3} {}'.format(n,course))
+
+  def _courseDelete(self):
     pass
 
 def main():
