@@ -12,8 +12,8 @@ from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
-from db.db_mongoengine import Player, Course, Tee, Hole, Round
-from db.db_mongoengine import DPlayer, DCourse, DRound
+from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result
+from db.db_mongoengine import DPlayer, DCourse, DRound, DResult
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses
@@ -144,19 +144,49 @@ class DBMenu(Menu):
     for option in self.lstCmd[3:]:
       lst = option.split('=')
       options[lst[0]] = lst[1]
-    
+
     courses = Course.objects(name__contains=course_name)
-    if len(courses) > 1:
+    if not courses:
+      raise InputException('Course name <{}> not matched.'.format(course_name))
+    elif len(courses) > 1:
       raise InputException('Course name <{}> not unique. Matches {}'.format(course_name, len( courses)))
     course = courses[0]
+
     golf_round = Round(course=course, date_played=dtPlay, dict_options=options)
     golf_round.save()
     self._round_id = golf_round.id
     print('new round id = {}'.format(self._round_id))
 
   def _roundAddPlayer(self):
-    # 
-    pass
+    # gap <email match> <tee>
+    if self._round_id is None:
+      raise InputException( 'Golf round not created')
+    if len(self.lstCmd) < 3:
+      raise InputException( 'Not enough arguments for %s command' % self.lstCmd[0] )
+    email = self.lstCmd[1]
+    tee_name = self.lstCmd[2]
+
+    # get round
+    doc_round = Round.objects(id=self._round_id).first()
+    golf_round = DRound(doc_round)
+    # find player
+    players = Player.objects(email__contains=email)
+    if not players:
+      raise InputException('Player email <{}> not matched.'.format(email))
+    elif len(players) > 1:
+      raise InputException('Player email <{}> not unique. Matches {}'.format(email, len(players)))
+    doc_player = players[0]
+    player = DPlayer(doc_player)
+    # Create Result
+    course_handicap = golf_round.calcCourseHandicap(player, tee_name)
+    doc_result = Result(player=doc_player, tee=tee_name, handicap=doc_player.handicap, course_handicap=course_handicap)
+    doc_round.results.append(doc_result)
+    doc_round.save()
+
+    result = DResult(doc_result)
+    print('Round:{}'.format(golf_round))
+    print('Player:{}'.format(player))
+    print('Result:{}'.format(result))
 
   def _roundAddGame(self):
     # 

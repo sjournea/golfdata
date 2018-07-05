@@ -163,19 +163,14 @@ class Result(EmbeddedDocument):
   handicap = FloatField(required=True)
   course_handicap = IntField(required=True)
   scores = ListField(EmbeddedDocumentField(Score))
-  
-  #def calcCourseHandicap(self, tee):
-    #"""Course Handicap = Handicap Index * Slope rating / 113."""
-    #type = self.round.get_option('calc_course_handicap')
-    #if type == 'simple':
-      #self.course_handicap = round(self.handicap)
-    #else:   # type == 'USTA':
-      #self.course_handicap = int(round(self.handicap * tee.slope / 113))   
-    #print('calcCourseHandicap() type:{} handicap:{} slope:{} course_handicap:{}'.format(type, self.handicap, tee.slope, self.course_handicap))
-  
+
+class DResult(Doc):
+
   #def get_completed_holes(self):
     #return len(self.scores)
 
+  def __str__(self):
+    return 'player:{} tee:{} handicap:{} course_handicap:{} scores{}'.format(self.player.nick_name, self.tee, self.handicap, self.course_handicap, self.scores)
 
 class Game(EmbeddedDocument):
   """Games played in a round."""
@@ -208,31 +203,42 @@ class Round(Document):
   course = ReferenceField(Course, required=True)
   date_played = DateTimeField(required=True) 
   dict_options = DictField(default=dict)
-  results = ListField(EmbeddedDocumentField(Result))  
-  games = ListField(EmbeddedDocumentField(Game))  
-  
+  results = ListField(EmbeddedDocumentField(Result))
+  games = ListField(EmbeddedDocumentField(Game))
+
 class DRound(Doc):
 
-  #OPTIONS = {
-    #'calc_course_handicap': {'type': 'enum', 'values': ('USGA', 'simple')},
-  #}
-  #def get_option(self, name):
-    #dct = ast.literal_eval(self.dict_options)
-    #return dct.get(name)
+  def __init__(self, doc):
+    super().__init__(doc)
+    self.course = DCourse(doc.course)
 
-  #def set_option(self, name, value):
-    #if name not in self.OPTIONS:
-      #raise GolfDBException('option name "{}" not supported'.format(name))
-    #option = self.OPTIONS[name]
-    #if option['type'] == 'enum':
-      #if value not in option['values']:
-        #raise GolfDBException('option {} value "{}" illegal. Must be in {}'.format(name, value, option['values']))      
-    #else:
-      #raise GolfDBException('option type "{}" not supported'.format(option['type']))
-    ## set option value
-    #dct = ast.literal_eval(self.dict_options)
-    #dct[name] = value
-    #self.dict_options = str(dct)
+  def calcCourseHandicap(self, player, tee_name):
+    """Course Handicap = Handicap Index * Slope rating / 113."""
+    handicap_type = self.dict_options.get('handicap_type', 'USGA')
+    course_handicap = None
+    slope = None
+    if handicap_type == 'simple':
+      # Course Handicap = round(handicap)
+      course_handicap = round(player.handicap)
+    elif handicap_type == 'USGA':
+      # Course Handicap = Handicap Index * Slope rating / 113
+      # need to get the tee slope rating from the course
+      tee_gender = 'mens' if player.gender == 'man' else 'womens'
+      for tee in self.course.tees:
+        if tee.name == tee_name and tee.gender == tee_gender:
+          slope = tee.slope
+          break
+      else:
+        raise Exception('{} tee <{}> not found.'.format(tee_gender, tee_name))
+      course_handicap = int(round(player.handicap * slope / 113))
+    else:
+      raise Exception('handicap type <{}> not supported.'.format(handicap_type))
+    print('calcCourseHandicap() handicap_type:{} handicap:{} slope:{} course_handicap:{}'.format(handicap_type, player.handicap, slope, course_handicap))
+    return course_handicap
+
+  #OPTIONS = {
+    #'handicap_type': {'type': 'enum', 'values': ('USGA', 'simple')},
+  #}
 
   #def addScores(self, session, hole, dct_scores):
     #"""Add some scores for this round.
@@ -278,10 +284,10 @@ class DRound(Doc):
   #def get_completed_holes(self):
     #return max([result.get_completed_holes() for result in self.results])
 
-  #def getScorecard(self, ESC=True):
-    #dct = self.course.getScorecard(ESC=ESC)
-    #dct['title'] = '{0:*^98}'.format(' '+ self.course.name + ' ' + str(self.date_played) + ' ')
-    #return dct
+  def getScorecard(self, ESC=True):
+    dct = self.course.getScorecard(ESC=ESC)
+    dct['title'] = '{0:*^98}'.format(' '+ self.course.name + ' ' + str(self.date_played) + ' ')
+    return dct
 
   def __str__(self):
     return '{} {:<30} - {}'.format(self.date_played, self.course.name, ','.join([result.player.nick_name for result in self.results]))

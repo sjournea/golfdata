@@ -1,11 +1,10 @@
 # create a round and add players scores
-gcr Rolling 2018-06-22 calc_course_handicap=simple
-pause enable
-
+gcr Rolling 2018-06-22 handicap_type=USGA
 gad sjournea Challenge
 gad snake Challenge
 gad spanky Challenge
 gad reload Challenge
+pause enable
 # add games
 gag gross
 gag net use_full_net=True
