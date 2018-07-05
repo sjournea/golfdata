@@ -1,6 +1,6 @@
 """db_mongo_engine.py"""
-from mongoengine import Document,EmbeddedDocument
-from mongoengine.fields import EmailField, StringField, FloatField, IntField, ReferenceField, ListField, EmbeddedDocumentField
+from mongoengine import *
+#from mongoengine.fields import EmailField, StringField, FloatField, IntField, ReferenceField, ListField, EmbeddedDocumentField
 
 class Doc(object):
   def __init__(self, doc):

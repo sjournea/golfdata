@@ -10,7 +10,7 @@ import traceback
 from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
-import mongoengine as eng
+from mongoengine import *
 from db.db_mongoengine import Player, Course, Tee, Hole
 from db.db_mongoengine import DPlayer, DCourse
 from db.data.test_players import DBGolfPlayers
@@ -26,7 +26,7 @@ class DBMenu(Menu):
     self.url = kwargs.get('url')
     self.database = kwargs.get('database')
     if self.database:
-      self.db = eng.connect(self.database)
+      self.db = connect(self.database)
     super().__init__(cmdFile)
     # add menu items
     self.addMenuItem( MenuItem( 'dbl', '<database>',        
@@ -45,6 +45,8 @@ class DBMenu(Menu):
                                 #'create a course.', self._courseCreate) )
     self.addMenuItem( MenuItem( 'cor', '',        
                                 'retrieve a course.', self._courseRetrieve) )
+    self.addMenuItem( MenuItem( 'cos', '<name>',        
+                                'return a course scorecard.', self._courseGetScorecard) )
     #self.addMenuItem( MenuItem( 'cou', 'email,first_name,last_name,nick_name,handicap,gender',        
                                 #'update a course.', self._courseUpdate) )
     self.addMenuItem( MenuItem( 'cod', 'email',        
@@ -58,7 +60,7 @@ class DBMenu(Menu):
 
   def _dbConnect(self):
     self.database = self.lstCmd[1]
-    eng.connect(self.database)
+    connect(self.database)
 
   def _dbDrop(self):
     self.db.drop_database(self.database)
@@ -107,6 +109,20 @@ class DBMenu(Menu):
 
   def _courseDelete(self):
     pass
+
+  def _courseGetScorecard(self):
+    if len(self.lstCmd) < 2:
+      raise InputException('Not enough arguments for {} command'.format(self.lstCmd[0]))
+    name = self.lstCmd[1]
+    courses = Course.objects(name__contains=name)
+    for doc in courses:
+      course = DCourse(doc)
+      dct = course.getScorecard()
+      print(course.name)
+      print(dct['hdr'])
+      print(dct['par'])
+      print(dct['hdcp'])
+
 
 def main():
   DEF_LOG_ENABLE = 'dbmain'
