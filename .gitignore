@@ -100,5 +100,8 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# wing IDE
+*.wp?
+
 # mypy
 .mypy_cache/

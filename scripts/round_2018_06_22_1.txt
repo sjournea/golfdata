@@ -1,0 +1,39 @@
+# create a round and add players scores
+gcr Rolling 2018-06-22 handicap_type=USGA
+gad sjournea Challenge
+gad snake Challenge
+gad spanky Challenge
+gad reload Challenge
+pause enable
+# add games
+gag gross
+gag net use_full_net=True
+gag putts
+gag stableford stableford_type=British wager=0.50
+gag greenie wager=1.0
+gag snake snake_type=Hold wager=1.0
+gag bestball teams=[(0,3),(1,2)]
+#gag rewards wager=2.0
+# start game
+#   greenie={'qualified':'Spanky'}  
+#   snake={'closest_3_putt':'Snake'}
+gst 
+pause enable
+gas  1 gross=[7,5,6,6]   putts=[4,1,3,3]
+gas  2 gross=[6,4,5,5]   putts=[2,2,3,2]
+gas  3 gross=[4,6,5,5]   putts=[2,3,3,2] snake={'closest_3_putt':'Spanky'}
+gas  4 gross=[4,3,4,3]   putts=[2,1,2,1]
+gas  5 gross=[5,4,5,6]   putts=[3,2,2,3] snake={'closest_3_putt':'Reload'} 
+gas  6 gross=[5,6,2,5]   putts=[1,1,1,2]
+gas  7 gross=[5,6,6,6]   putts=[2,2,1,1]
+gas  8 gross=[5,4,5,7]   putts=[3,2,2,2]
+gas  9 gross=[5,6,5,6]   putts=[1,2,2,3] pause=enable
+gas 10 gross=[6,7,6,7]   putts=[2,2,3,3] snake={'closest_3_putt':'Reload'}
+gas 11 gross=[5,6,4,5]   putts=[2,3,2,2] 
+gas 12 gross=[3,4,3,4]   putts=[2,1,1,2] 
+gas 13 gross=[6,4,6,5]   putts=[2,2,2,3] 
+gas 14 gross=[7,5,5,6]   putts=[2,1,3,3] snake={'closest_3_putt':'Reload'}
+gas 15 gross=[6,5,6,6]   putts=[1,2,3,1] 
+gas 16 gross=[4,5,4,4]   putts=[2,2,2,2] 
+gas 17 gross=[4,5,6,7]   putts=[1,2,3,2] 
+gas 18 gross=[7,6,7,5]   putts=[2,1,1,1] pause=enable
