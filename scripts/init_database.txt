@@ -1,0 +1,10 @@
+# script - init_database.txt
+# clear database
+dr
+# add players
+testdata players
+plr
+# add courses
+testdata courses
+cor
+# 

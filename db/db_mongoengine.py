@@ -1,6 +1,7 @@
 """db_mongo_engine.py"""
 from mongoengine import *
-#from mongoengine.fields import EmailField, StringField, FloatField, IntField, ReferenceField, ListField, EmbeddedDocumentField
+from mongoengine.fields import EmailField, StringField, FloatField, IntField, ReferenceField, ListField, EmbeddedDocumentField
+from mongoengine.fields import DictField, DateTimeField
 
 class Doc(object):
   def __init__(self, doc):
@@ -149,6 +150,141 @@ class DCourse(Doc):
     return '{:<40} - {:>2} holes - {:>2} tees par:{}'.format(self.name, len(self.holes), len(
       self.tees), self.course_par())
 
+class Score(EmbeddedDocument):
+  """Player score for a single hole."""
+  num = IntField(required=True)
+  gross = IntField(required=True)
+  putts = IntField()
+
+class Result(EmbeddedDocument):
+  """Player score for a round. References Score records."""
+  player = ReferenceField(Player, required=True)
+  tee = StringField(required=True)
+  handicap = FloatField(required=True)
+  course_handicap = IntField(required=True)
+  scores = ListField(EmbeddedDocumentField(Score))
+  
+  #def calcCourseHandicap(self, tee):
+    #"""Course Handicap = Handicap Index * Slope rating / 113."""
+    #type = self.round.get_option('calc_course_handicap')
+    #if type == 'simple':
+      #self.course_handicap = round(self.handicap)
+    #else:   # type == 'USTA':
+      #self.course_handicap = int(round(self.handicap * tee.slope / 113))   
+    #print('calcCourseHandicap() type:{} handicap:{} slope:{} course_handicap:{}'.format(type, self.handicap, tee.slope, self.course_handicap))
+  
+  #def get_completed_holes(self):
+    #return len(self.scores)
+
+
+class Game(EmbeddedDocument):
+  """Games played in a round."""
+  game_type = StringField(max_length=16, required=True)
+  dict_data = DictField(default=dict)
+
+  #def CreateGame(self):
+    #game_class = SqlGolfGameFactory(self.game_type)
+    #self._game_data = self.game_data
+    #game = game_class(self, self.round, **self._game_data['options'])
+    #game.validate()
+    #game.update()
+    #return game
+
+  #@property
+  #def game_data(self):
+    #return ast.literal_eval(self.dict_data)
+  
+  #@game_data.setter
+  #def game_data(self, value):
+    #self.dict_data = str(value)
+    
+  #def add_hole_dict_data(self, hole_num, dct_data):
+    #dct = self.game_data
+    #dct[hole_num] = dct_data
+    #self.game_data = dct
+
+
+class Round(Document):
+  course = ReferenceField(Course, required=True)
+  date_played = DateTimeField(required=True) 
+  dict_options = DictField(default=dict)
+  results = ListField(EmbeddedDocumentField(Result))  
+  games = ListField(EmbeddedDocumentField(Game))  
+  
+class DRound(Doc):
+
+  #OPTIONS = {
+    #'calc_course_handicap': {'type': 'enum', 'values': ('USGA', 'simple')},
+  #}
+  #def get_option(self, name):
+    #dct = ast.literal_eval(self.dict_options)
+    #return dct.get(name)
+
+  #def set_option(self, name, value):
+    #if name not in self.OPTIONS:
+      #raise GolfDBException('option name "{}" not supported'.format(name))
+    #option = self.OPTIONS[name]
+    #if option['type'] == 'enum':
+      #if value not in option['values']:
+        #raise GolfDBException('option {} value "{}" illegal. Must be in {}'.format(name, value, option['values']))      
+    #else:
+      #raise GolfDBException('option type "{}" not supported'.format(option['type']))
+    ## set option value
+    #dct = ast.literal_eval(self.dict_options)
+    #dct[name] = value
+    #self.dict_options = str(dct)
+
+  #def addScores(self, session, hole, dct_scores):
+    #"""Add some scores for this round.
+
+    #Args:
+      #session: sqalchemy session.
+      #hole : hole number, 1-number of holes on course.
+      #dct_scores: dictionary of scare data.
+        #lstGross - list of gross scores per player (required)
+        #lstPutts - list of putts per player.
+    #"""
+    #if hole < 1 or hole > len(self.course.holes):
+      #raise GolfException('hole number must be in 1-{}'.format(len(self.course.holes)))
+    #lstGross = dct_scores['lstGross']
+    #lstPutts = dct_scores.get('lstPutts')
+    #if len(lstGross) != len(self.results):
+      #raise GolfException('gross scores do not match number of players')
+    #if lstPutts and len(lstPutts) != len(self.results):
+      #raise GolfException('putts do not match number of players')
+    ## update scores
+    #for n,result in enumerate(self.results):
+      #score = Score(num=hole, gross=lstGross[n], result=result)
+      #if lstPutts:
+        #score.putts = lstPutts[n]
+      #session.add(score)
+    ##print('dct_scores:{}'.format(dct_scores))
+    #options = dct_scores.get('options')
+    #if options:
+      #for game in self.games:
+        #if game.game_type in options:
+          #golf_game = session.query(Game).filter(Game.round == self, Game.game_type == game.game_type).one()
+          #golf_game.add_hole_dict_data(hole, options[game.game_type])
+          #session.commit()
+
+  #def addGame(self, session, game_type, options=None):
+      ## Create Game
+      #dict_data = {'options': options} 
+      #game_class = SqlGolfGameFactory(game_type)
+      ## game_instance = game_class(round, )
+      #game = Game(round=self, game_type=game_type, dict_data=str(dict_data))
+      #session.add(game)
+
+  #def get_completed_holes(self):
+    #return max([result.get_completed_holes() for result in self.results])
+
+  #def getScorecard(self, ESC=True):
+    #dct = self.course.getScorecard(ESC=ESC)
+    #dct['title'] = '{0:*^98}'.format(' '+ self.course.name + ' ' + str(self.date_played) + ' ')
+    #return dct
+
+  def __str__(self):
+    return '{} {:<30} - {}'.format(self.date_played, self.course.name, ','.join([result.player.nick_name for result in self.results]))
 
 class Database(object):
   def __init__(self, url, database):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """dbmain.py"""
+import datetime
 import logging
 import platform
 if platform.system() == 'Linux':
@@ -11,8 +12,8 @@ from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
-from db.db_mongoengine import Player, Course, Tee, Hole
-from db.db_mongoengine import DPlayer, DCourse
+from db.db_mongoengine import Player, Course, Tee, Hole, Round
+from db.db_mongoengine import DPlayer, DCourse, DRound
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses
@@ -53,6 +54,14 @@ class DBMenu(Menu):
                                 'detete a course.', self._courseDelete) )
     self.addMenuItem( MenuItem( 'testdata', '<players|courses>',        
                                 'insert test data into database.', self._testData) )
+    self.addMenuItem( MenuItem( 'gcr', '<course> <YYYY-MM-DD> [option=value,...]',
+                                'Create a Round of Golf',      self._roundCreate))
+    self.addMenuItem( MenuItem( 'gad', '<email> <tee>',
+                                'Add player to Round of Golf', self._roundAddPlayer))
+    self.addMenuItem( MenuItem( 'gag', '<game> <players>',
+                                'Add game to Round of Golf',   self._roundAddGame))
+    self.addMenuItem( MenuItem( 'ror', '',        
+                                'retrieve rounds.', self._roundRetrieve) )
     self.updateHeader()
 
   def updateHeader(self):
@@ -124,6 +133,39 @@ class DBMenu(Menu):
       print(dct['par'])
       print(dct['hdcp'])
 
+  def _roundCreate(self):
+    # gcr <course> <YYYY-MM-DD> [option=value,...]
+    if len(self.lstCmd) < 3:
+      raise InputException( 'Not enough arguments for %s command' % self.lstCmd[0] )
+    course_name = self.lstCmd[1]
+    dtPlay = datetime.datetime.strptime(self.lstCmd[2], "%Y-%m-%d")
+    # get options
+    options = {}
+    for option in self.lstCmd[3:]:
+      lst = option.split('=')
+      options[lst[0]] = lst[1]
+    
+    courses = Course.objects(name__contains=course_name)
+    if len(courses) > 1:
+      raise InputException('Course name <{}> not unique. Matches {}'.format(course_name, len( courses)))
+    course = courses[0]
+    golf_round = Round(course=course, date_played=dtPlay, dict_options=options)
+    golf_round.save()
+    self._round_id = golf_round.id
+    print('new round id = {}'.format(self._round_id))
+
+  def _roundAddPlayer(self):
+    # 
+    pass
+
+  def _roundAddGame(self):
+    # 
+    pass
+  
+  def _roundRetrieve(self):
+    for n,doc in enumerate(Round.objects):
+      ro = DRound(doc)
+      print('  {:>3} {}'.format(n,ro))
 
 def main():
   DEF_LOG_ENABLE = 'dbmain'
