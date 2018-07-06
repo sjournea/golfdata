@@ -37,14 +37,14 @@ Basic golf game, the players simply add up their scores and compare. You score 9
     """Scorecard with all players."""
     lstPlayers = []
     for n,score in enumerate(self._players):
-      dct = {'player': score.result.player }
+      dct = {'player': score.doc }
       dct['in'] = score.dct_gross['in']
       dct['out'] = score.dct_gross['out']
       dct['total'] = score.dct_gross['total']
       dct['esc'] = score.esc
       dct['holes'] = score.dct_gross['holes']
       # build line for stdout
-      line = '{:<6}'.format(score.result.player.nick_name)
+      line = '{:<6}'.format(score.nick_name)
       for gross in score.dct_gross['holes'][:9]:
         line += ' {:>3}'.format(gross) if gross is not None else '    '
       line += ' {:>4}'.format(dct['out'])

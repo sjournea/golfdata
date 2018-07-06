@@ -13,7 +13,8 @@ from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
 from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result, Game, Score
-from db.wrap import DPlayer, DCourse, DRound, DResult
+from db.dplayer import DPlayer
+from db.wrap import DCourse, DRound, DResult
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses

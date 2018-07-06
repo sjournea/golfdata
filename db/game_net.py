@@ -9,8 +9,6 @@ class NetPlayer(GamePlayer):
     super().__init__(game, result)
     self.dct_net = self._init_dict()
     self._bumps = self.calc_bumps(min_handicap)
-    print('_bumps:{}'.format(self._bumps))
-
 
 class GameNet(GolfGame):
   """Basic net golf game. For us weekenders."""
@@ -51,7 +49,7 @@ The bumps will be added to the lowest handicap holes on the course being played.
     lstPlayers = []
     for n,sc in enumerate(self._players):
       dct = {
-        'player': sc.result.player,
+        'player': sc.doc,
         'in': sc.dct_net['in'],
         'out': sc.dct_net['out'],
         'total': sc.dct_net['total'],
@@ -60,7 +58,6 @@ The bumps will be added to the lowest handicap holes on the course being played.
       }
       line = '{:<3} {:>2}'.format(sc.getInitials(), sc.result.course_handicap)
       for net,bump in zip(sc.dct_net['holes'][:9], sc._bumps[:9]):
-        print('net:{} bump:{}'.format(net,bump))
         nets = '{}{}'.format(bump*'*', net if net is not None else '')
         line += ' {:>3}'.format(nets)
       line += ' {:>4}'.format(dct['out'])
@@ -81,7 +78,7 @@ The bumps will be added to the lowest handicap holes on the course being played.
     prev_total = None
     for sc in scores:
       score_dct = {
-        'player': sc.result.player,
+        'player': sc.doc,
         'total' : sc.dct_net['total'],
       }
       if prev_total != None and score_dct['total'] > prev_total:
