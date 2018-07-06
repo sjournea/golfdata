@@ -13,10 +13,11 @@ from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
 from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result, Game
-from db.doc import DPlayer, DCourse, DRound, DResult, DGame
+from db.wrap import DPlayer, DCourse, DRound, DResult
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses
+from db.game_factory import GolfGameFactory
 
 TLLog.config('logs/dbmain.log', defLogLevel=logging.INFO )
 
@@ -52,6 +53,8 @@ class DBMenu(Menu):
                                 #'update a course.', self._courseUpdate) )
     self.addMenuItem( MenuItem( 'cod', 'email',        
                                 'detete a course.', self._courseDelete) )
+    self.addMenuItem( MenuItem( 'ror', '',        
+                                'retrieve rounds.', self._roundRetrieve) )
     self.addMenuItem( MenuItem( 'testdata', '<players|courses>',        
                                 'insert test data into database.', self._testData) )
     self.addMenuItem( MenuItem( 'gcr', '<course> <YYYY-MM-DD> [option=value,...]',
@@ -60,8 +63,8 @@ class DBMenu(Menu):
                                 'Add player to Round of Golf', self._roundAddPlayer))
     self.addMenuItem( MenuItem( 'gag', '<game> <players>',
                                 'Add game to Round of Golf',   self._roundAddGame))
-    self.addMenuItem( MenuItem( 'ror', '',        
-                                'retrieve rounds.', self._roundRetrieve) )
+    self.addMenuItem( MenuItem( 'gst', '',
+                                'Start Round of Golf',         self._roundStart))
     self.updateHeader()
 
   def updateHeader(self):
@@ -205,10 +208,64 @@ class DBMenu(Menu):
     doc_round = Round.objects(id=self._round_id).first()
     golf_round = DRound(doc_round)
     doc_game = Game(game_type=game_type, options=dct)
-    game = DGame(doc_game)
+    #game = DGame(doc_game)
     doc_round.games.append(doc_game)
     doc_round.save()
-    print(game)
+    #print(game)
+
+  def _roundStart(self):
+    if self._round_id is None:
+      raise InputException( 'Golf round not created')
+    self._roundDump()
+
+  def _roundDump(self):
+    """ dump scorecard, leaderboard, status."""
+    # get round
+    doc_round = Round.objects(id=self._round_id).first()
+    golf_round = DRound(doc_round)
+    
+    #
+    #games = [game.CreateGame() for game in golf_round.games]
+    self._roundScorecard(golf_round)
+    self._roundLeaderboard(golf_round)
+    self._roundStatus(golf_round)
+
+  def _roundScorecard(self, golf_round):
+    dct = golf_round.getScorecard(ESC=True)
+    print(dct['title'])
+    print(dct['hdr'])
+    print(dct['par'])
+    print(dct['hdcp'])
+    for game in golf_round.games:
+      #dct = game.getScorecard()
+      dct = game.doc.scorecard
+      print(dct['header'])
+      for player in dct['players']:
+        print(player['line'])
+
+  def _roundLeaderboard(self, golf_round, **kwargs):
+    length = 22
+    lstLines = [None for _ in range(10)]
+    def update_line(index, msg):
+      if lstLines[index] is None:
+        lstLines[index] = '{:<22}'.format(msg)
+      else:
+        lstLines[index] += ' {:<22}'.format(msg)
+
+    header = '{0:-^22}' if kwargs.get('sort_type') == 'money' else '{0:*^22}'
+    for game in golf_round.games:
+      dctLeaderboard = game.doc.leaderboard
+      update_line(0, header.format(' '+ game.short_description+ ' '))
+      update_line(1, dctLeaderboard['hdr'])
+      for i,dct in enumerate(dctLeaderboard['leaderboard']):
+        update_line(i+2, dct['line'])
+    for line in [line for line in lstLines if line is not None]:
+      print(line)
+
+  def _roundStatus(self, golf_round):
+    for game in golf_round.games:
+      dctStatus = game.doc.status
+      print('{:<15} - {}'.format(game.short_description, dctStatus['line']))
 
   def _roundRetrieve(self):
     for n,doc in enumerate(Round.objects):
