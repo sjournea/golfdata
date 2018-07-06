@@ -138,6 +138,9 @@ class DResult(Doc):
     #self.game_data = dct
 
 class DRound(Doc):
+  OPTIONS = {
+    'handicap_type': {'type': 'enum', 'values': ('USGA', 'simple')},
+  }
   def __init__(self, doc):
     super().__init__(doc)
     self.course = DCourse(doc.course)
@@ -146,10 +149,15 @@ class DRound(Doc):
     for doc_game in self.doc.games:
       game_class = GolfGameFactory(doc_game.game_type)
       game = game_class(doc_game, self)
-      doc_game.leaderboard = game.getLeaderboard()
-      doc_game.scorecard = game.getScorecard()
-      doc_game.status = game.getStatus()
       self.games.append(game)
+
+  def update_games(self):
+    # create all games
+    for game in self.games:
+      game.update()
+      game.doc.leaderboard = game.getLeaderboard()
+      game.doc.scorecard = game.getScorecard()
+      game.doc.status = game.getStatus()
 
   def calcCourseHandicap(self, player, tee_name):
     """Course Handicap = Handicap Index * Slope rating / 113."""
@@ -174,48 +182,6 @@ class DRound(Doc):
       raise Exception('handicap type <{}> not supported.'.format(handicap_type))
     print('calcCourseHandicap() handicap_type:{} handicap:{} slope:{} course_handicap:{}'.format(handicap_type, player.handicap, slope, course_handicap))
     return course_handicap
-
-  #OPTIONS = {
-    #'handicap_type': {'type': 'enum', 'values': ('USGA', 'simple')},
-  #}
-
-  #def addScores(self, session, hole, dct_scores):
-    #"""Add some scores for this round.
-
-    #Args:
-      #session: sqalchemy session.
-      #hole : hole number, 1-number of holes on course.
-      #dct_scores: dictionary of scare data.
-        #lstGross - list of gross scores per player (required)
-        #lstPutts - list of putts per player.
-    #"""
-    #if hole < 1 or hole > len(self.course.holes):
-      #raise GolfException('hole number must be in 1-{}'.format(len(self.course.holes)))
-    #lstGross = dct_scores['lstGross']
-    #lstPutts = dct_scores.get('lstPutts')
-    #if len(lstGross) != len(self.results):
-      #raise GolfException('gross scores do not match number of players')
-    #if lstPutts and len(lstPutts) != len(self.results):
-      #raise GolfException('putts do not match number of players')
-    ## update scores
-    #for n,result in enumerate(self.results):
-      #score = Score(num=hole, gross=lstGross[n], result=result)
-      #if lstPutts:
-        #score.putts = lstPutts[n]
-      #session.add(score)
-    ##print('dct_scores:{}'.format(dct_scores))
-    #options = dct_scores.get('options')
-    #if options:
-      #for game in self.games:
-        #if game.game_type in options:
-          #golf_game = session.query(Game).filter(Game.round == self, Game.game_type == game.game_type).one()
-          #golf_game.add_hole_dict_data(hole, options[game.game_type])
-          #session.commit()
-
-  #def addGame(self, game_type, options):
-      #game = Game(game_type=game_type, options=options)
-      #self.doc.games.append(game)
-      #self.doc.save()
 
   #def get_completed_holes(self):
     #return max([result.get_completed_holes() for result in self.results])

@@ -5,3 +5,6 @@ class Doc(object):
     self.doc = doc
     for name in doc._fields.keys():
       setattr(self, name, getattr(doc, name))
+  
+  def save(self):
+    self.doc.save()

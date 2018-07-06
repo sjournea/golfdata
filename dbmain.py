@@ -12,7 +12,7 @@ from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
-from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result, Game
+from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result, Game, Score
 from db.wrap import DPlayer, DCourse, DRound, DResult
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
@@ -65,6 +65,8 @@ class DBMenu(Menu):
                                 'Add game to Round of Golf',   self._roundAddGame))
     self.addMenuItem( MenuItem( 'gst', '',
                                 'Start Round of Golf',         self._roundStart))
+    self.addMenuItem( MenuItem( 'gas', '<hole> gross=<gross..> <pause=enable>',
+                                'Add Scores',                 self._roundScore))
     self.updateHeader()
 
   def updateHeader(self):
@@ -208,24 +210,25 @@ class DBMenu(Menu):
     doc_round = Round.objects(id=self._round_id).first()
     golf_round = DRound(doc_round)
     doc_game = Game(game_type=game_type, options=dct)
-    #game = DGame(doc_game)
     doc_round.games.append(doc_game)
     doc_round.save()
-    #print(game)
 
   def _roundStart(self):
     if self._round_id is None:
       raise InputException( 'Golf round not created')
-    self._roundDump()
-
-  def _roundDump(self):
-    """ dump scorecard, leaderboard, status."""
     # get round
     doc_round = Round.objects(id=self._round_id).first()
     golf_round = DRound(doc_round)
-    
-    #
-    #games = [game.CreateGame() for game in golf_round.games]
+    golf_round.update_games()
+    self._roundDump(golf_round)
+
+  def _roundDump(self, golf_round=None):
+    """ dump scorecard, leaderboard, status."""
+    # get round
+    if not golf_round:
+      doc_round = Round.objects(id=self._round_id).first()
+      golf_round = DRound(doc_round)
+    # dumps
     self._roundScorecard(golf_round)
     self._roundLeaderboard(golf_round)
     self._roundStatus(golf_round)
@@ -266,6 +269,86 @@ class DBMenu(Menu):
     for game in golf_round.games:
       dctStatus = game.doc.status
       print('{:<15} - {}'.format(game.short_description, dctStatus['line']))
+
+  def _roundScore(self):
+    """ gas <hole> gross=<list> [pause=enable]"""
+    
+    def addScore(gr):
+      if hole < 1 or hole > len(gr.course.holes):
+        raise GolfException('hole number must be in 1-{}'.format(len(gr.course.holes)))
+      if len(lstGross) != len(gr.results):
+        raise GolfException('gross scores do not match number of players')
+      if lstPutts and len(lstPutts) != len(gr.results):
+        raise GolfException('putts do not match number of players')
+      # update scores
+      for n,result in enumerate(gr.results):
+        score = Score(num=hole, gross=lstGross[n])
+        if lstPutts:
+          score = Score(num=hole, gross=lstGross[n], putts=lstPutts[n])
+        else:
+          score = Score(num=hole, gross=lstGross[n])
+        result.scores.append(score)
+        result.save()
+      #print('dct_scores:{}'.format(dct_scores))
+      if options:
+        for game in gr.games:
+          if game.game_type in options:
+            game.hole_data[hole] = options[game.game_type]
+
+     # start here    
+    if self._round_id is None:
+      raise InputException( 'Golf round not created')
+    if len(self.lstCmd) < 3:
+      raise InputException( 'Not enough arguments for %s command' % self.lstCmd[0] )
+    hole = int(self.lstCmd[1])
+    pause_command = 'pause'
+    lstGross, lstPutts = None, None
+    options = {}
+    for arg in self.lstCmd[2:]:
+      lst = arg.split('=')
+      if lst[0] == 'gross':
+        lstGross = eval(lst[1])
+      elif lst[0] == 'putts':
+        lstPutts = eval(lst[1])
+      elif lst[0] in ('greenie','snake'):
+        options[lst[0]] = eval(lst[1])
+      elif lst[0] == 'pause':
+        pause_command += ' '+ lst[1]
+      else:
+        raise InputException('Unknown argument {}'.format(arg))
+    if lstGross is None:
+      raise InputException('gross must be set with gas command.')
+    #
+    # get round
+    doc_round = Round.objects(id=self._round_id).first()
+    addScore(doc_round)
+
+    golf_round = DRound(doc_round)
+    golf_round.update_games()
+    golf_round.save()
+    #lst_game_more_info_needed = []
+    #golf_round = session.query(Round).filter(Round.round_id == self._round_id).one()
+    #for game in golf_round.games:
+      #try:
+        #game.CreateGame()
+      #except GolfGameException as ex:
+        #print('{} Game - {} - {}'.format(ex.dct['game'].short_description, ex.dct['msg'], ','.join([pl.nick_name for pl in ex.dct['players']])))
+        #lst_game_more_info_needed.append(ex)
+      
+    #if lst_game_more_info_needed:
+      #for ex in lst_game_more_info_needed:
+        #prompt = '{} Game - {} - {} : '.format(ex.dct['game'].short_description, ex.dct['msg'], ','.join(['{} : {}'.format(n, pl.nick_name) for n,pl in enumerate(ex.dct['players'])]))
+        
+        #i = raw_input(prompt)
+        #if i == 'x':
+          #raise Exception('Abort by user')
+        #i = int(i)
+        #game = session.query(Game).filter(Game.game_id == ex.dct['game'].game.game_id).one()
+        #game.add_hole_dict_data(ex.dct['hole_num'], {ex.dct['key'] : ex.dct['players'][i].nick_name})
+        #session.commit()
+
+    self._roundDump(golf_round)
+    self.pushCommands([pause_command])
 
   def _roundRetrieve(self):
     for n,doc in enumerate(Round.objects):

@@ -24,7 +24,7 @@ Basic golf game, the players simply add up their scores and compare. You score 9
   
   def update(self):
     """Update gross results for all scores so far."""
-    for pl, result in zip(self._players, self.golf_round.results):
+    for pl, result in zip(self._players, self.golf_round.doc.results):
       pl.esc = 0
       for score in result.scores:
         # update gross

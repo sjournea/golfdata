@@ -60,6 +60,7 @@ class Game(EmbeddedDocument):
   """Games played in a round."""
   game_type = StringField(max_length=16, required=True)
   options = DictField(default=dict)
+  hole_data = DictField(default=dict)
   leaderboard = DictField(default=dict)
   scorecard = DictField(default=dict)
   status = DictField(default=dict)
