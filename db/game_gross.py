@@ -44,7 +44,7 @@ Basic golf game, the players simply add up their scores and compare. You score 9
       dct['esc'] = score.esc
       dct['holes'] = score.dct_gross['holes']
       # build line for stdout
-      line = '{:<6}'.format(score.player.nick_name)
+      line = '{:<6}'.format(score.result.player.nick_name)
       for gross in score.dct_gross['holes'][:9]:
         line += ' {:>3}'.format(gross) if gross is not None else '    '
       line += ' {:>4}'.format(dct['out'])
@@ -64,7 +64,7 @@ Basic golf game, the players simply add up their scores and compare. You score 9
     prev_total = None
     for score in scores:
       score_dct = {
-        'player': score.player,
+        'player': score.result.player,
         'total' : score.dct_gross['total'],
       }
       if prev_total != None and score_dct['total'] > prev_total:

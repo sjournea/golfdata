@@ -6,11 +6,19 @@ class DPlayer(Doc):
   def getFullName(self):
     return '{} {}'.format(self.first_name, self.last_name)
 
+  def getInitials(self):
+    return self.first_name[0] + self.last_name[0]
+  
+  dct_plural_gender = {'man': 'mens', 'woman': 'womens'}
+  @property
+  def genderPlural(self):
+    return self.dct_plural_gender[self.gender]
+  
   def __str__(self):
-    return 'email:{:<20} {:<30} - {:<15} {:>5.1f}'.format(self.email, self.getFullName(), self.nick_name, self.handicap)
+    return '{:<15} - {:<6} {:<10} {:<8} {:<5} handicap {:.1f}'.format(
+        self.email, self.first_name, self.last_name, self.nick_name, self.gender, self.handicap)
 
 class DCourse(Doc):
-
   def setStats(self):
     """Par totals."""
     self.out_tot = sum([hole.par for hole in self.holes[:9]])
@@ -85,7 +93,7 @@ class DCourse(Doc):
       handicap -= 18
     # now handicaps < 18
     if handicap > 0:
-      for bp in xrange(handicap % 18, 0, -1):
+      for bp in range(handicap % 18, 0, -1):
         for n,hole in enumerate(self.holes):
           if hole.handicap == bp:
             bumps[n] += 1

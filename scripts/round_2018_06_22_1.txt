@@ -6,7 +6,8 @@ gad spanky Challenge
 gad reload Challenge
 # add games
 gag gross
-#gag net use_full_net=True
+gag net use_full_net=True
+pause enable
 #gag putts
 #gag stableford stableford_type=British wager=0.50
 #gag greenie wager=1.0

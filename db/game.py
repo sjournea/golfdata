@@ -106,12 +106,24 @@ class GolfGame(Doc):
     return '{} options:{} leaderboard:{} scorecard:{} status:{}'.format(
       self.__class__.__name__, self.options, self.leaderboard, self.scorecard, self.status)
 
-class GamePlayer(object):
+class GamePlayer(Doc):
+  # TODO: Should inherit from DPlayer
   def __init__(self, game, result):
+    super().__init__(result.player)
     self.game = game
     self.result = result
-    self.player = result.player
 
+  def getFullName(self):
+    return '{} {}'.format(self.first_name, self.last_name)
+
+  def getInitials(self):
+    return self.first_name[0] + self.last_name[0]
+  
+  dct_plural_gender = {'man': 'mens', 'woman': 'womens'}
+  @property
+  def genderPlural(self):
+    return self.dct_plural_gender[self.gender]
+  
   def _init_dict(self, score_type=int):
     """Create and initialize scoring dictionary.
 
@@ -137,8 +149,9 @@ class GamePlayer(object):
     dct['in']  = sum([sc for sc in dct['holes'][9:] if sc is not None])
     dct['total'] = dct['in'] + dct['out'] + dct.get('overall', 0)
 
-  #def calc_bumps(self, min_handicap):
-    #return self.game.golf_round.course.calcBumps(self.result.course_handicap - min_handicap)
+  def calc_bumps(self, min_handicap):
+    return self.game.golf_round.course.calcBumps(self.result.course_handicap - min_handicap)
+
 
 class GolfTeam(object):
   """Base class for all golf teams."""

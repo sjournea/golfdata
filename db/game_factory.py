@@ -1,7 +1,7 @@
 """sql_game_factory.py -- factory for games."""
 from .exceptions import GolfException
 from .game_gross import GameGross
-#from .sql_game_net import SqlGameNet
+from .game_net import GameNet
 #from .sql_game_skins import SqlGameSkins
 #from .sql_game_putts import SqlGamePutts
 #from .sql_game_stableford import SqlGameStableford
@@ -15,7 +15,7 @@ from .game_gross import GameGross
 
 dctGames = { 
   'gross': GameGross,
-  #'net': SqlGameNet,
+  'net': GameNet,
   #'skins': SqlGameSkins,
   #'putts': SqlGamePutts,
   #'stableford': SqlGameStableford,
