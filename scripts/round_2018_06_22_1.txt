@@ -1,18 +1,18 @@
 # create a round and add players scores
-gcr Rolling 2018-06-22 handicap_type=USGA
+gcr Rolling 2018-06-22 handicap_type=simple
 gad sjournea Challenge
 gad snake Challenge
 gad spanky Challenge
 gad reload Challenge
-pause enable
 # add games
 gag gross
 gag net use_full_net=True
-gag putts
-gag stableford stableford_type=British wager=0.50
-gag greenie wager=1.0
-gag snake snake_type=Hold wager=1.0
-gag bestball teams=[(0,3),(1,2)]
+pause enable
+#gag putts
+#gag stableford stableford_type=British wager=0.50
+#gag greenie wager=1.0
+#gag snake snake_type=Hold wager=1.0
+#gag bestball teams=[(0,3),(1,2)]
 #gag rewards wager=2.0
 # start game
 #   greenie={'qualified':'Spanky'}  

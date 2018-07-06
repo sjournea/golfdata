@@ -1,0 +1,7 @@
+# mother of all sql scripts
+pause ignore on
+< scripts/init_database.txt
+< scripts/round_2018_06_22_1.txt
+#< scripts/sql_round_2018_06_22_2.txt
+#< scripts/sql_round_2018_06_23_1.txt
+#< scripts/sql_round_2018_06_23_2.txt
