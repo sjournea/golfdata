@@ -12,8 +12,8 @@ from util.menu import MenuItem, Menu, InputException, FileInput
 from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
-from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result
-from db.db_mongoengine import DPlayer, DCourse, DRound, DResult
+from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result, Game
+from db.doc import DPlayer, DCourse, DRound, DResult, DGame
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses
@@ -189,9 +189,27 @@ class DBMenu(Menu):
     print('Result:{}'.format(result))
 
   def _roundAddGame(self):
-    # 
-    pass
-  
+    if self._round_id is None:
+      raise InputException( 'Golf round not created')
+    if len(self.lstCmd) < 2:
+      raise InputException( 'Not enough arguments for %s command' % self.lstCmd[0] )
+    game_type = self.lstCmd[1]
+
+    dct = {}
+    for arg in self.lstCmd[2:]:
+      lst = arg.split('=')
+      if len(lst) == 2:
+        dct[lst[0]] = lst[1]
+
+    # get round
+    doc_round = Round.objects(id=self._round_id).first()
+    golf_round = DRound(doc_round)
+    doc_game = Game(game_type=game_type, options=dct)
+    game = DGame(doc_game)
+    doc_round.games.append(doc_game)
+    doc_round.save()
+    print(game)
+
   def _roundRetrieve(self):
     for n,doc in enumerate(Round.objects):
       ro = DRound(doc)
