@@ -74,9 +74,10 @@ class GameSnake(GolfGame):
               dct = {
                 'hole_num': hole_num,
                 'players': [w[0].doc for w in lst_losers],
-                'key': 'closest_3_putt',
                 'msg': 'Which 3 putt player had the closest 1st putt on hole {}?'.format(hole_num),
-                'game' : self,
+                'hole_data' : self.hole_data,
+                'key' : 'closest_3_putt',
+                'game': self,
               }
               raise GolfGameException(dct)
         #

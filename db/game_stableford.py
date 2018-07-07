@@ -69,6 +69,7 @@ Since most people have a hard time shooting double eagles and eagles, golfers of
           raise GolfException('stableford_type Spanish joker[1] must be in 10-18.')
 
   def setup(self, **kwargs):
+    # TODO: Final games should be FINAL. Saved/restored from database.
     self.dct_stableford = self.dct_scoring[self.stableford_type]
     # use full handicap for all players
     self._players = [StablefordPlayer(self, result) for result in self.golf_round.results]

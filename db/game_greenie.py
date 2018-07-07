@@ -78,9 +78,11 @@ Options:
             dct = {
               'hole_num': hole_num,
               'players': [w[0].player for w in lst_winners],
-              'key': 'qualified',
               'msg': 'Which player was closest to the pin on hole {}?'.format(hole_num),
               'game' : self,
+              'key': 'qualified',
+              'hole_data' : self.hole_data,
+              'game': self,
              }
             raise GolfGameException(dct)
         if len(lst_winners) == 1:
