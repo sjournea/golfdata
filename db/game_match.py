@@ -95,6 +95,7 @@ Handicaps are used in match play.
       
   def getScorecard(self, **kwargs):
     """Scorecard with all players."""
+    # TODO Improve scorecard display. 
     lstPlayers = []
     for n,sc in enumerate(self._players):
       dct = {'player': sc.doc }
