@@ -71,13 +71,14 @@ Options:
         if par > 3 and self._carry == 0:
           break
         if len(lst_winners) > 1:
-          if hole_num in self.game._game_data and self.game._game_data[hole_num].get('qualified'):
-            qualified = self.game._game_data[hole_num]['qualified']
-            lst_winners = [w for w in lst_winners if str(w[0].player.nick_name) == qualified]
+          key = str(hole_num)
+          if key in self.hole_data and self.hole_data[key].get('qualified'):
+            qualified = self.hole_data[key]['qualified']
+            lst_winners = [w for w in lst_winners if str(w[0].nick_name) == qualified]
           else:
             dct = {
               'hole_num': hole_num,
-              'players': [w[0].player for w in lst_winners],
+              'players': [w[0].doc for w in lst_winners],
               'msg': 'Which player was closest to the pin on hole {}?'.format(hole_num),
               'game' : self,
               'key': 'qualified',
