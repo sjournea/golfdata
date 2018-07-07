@@ -30,7 +30,7 @@ class GolfGame(Doc):
     # set game options
     self.load_game_options()
     # setup and validate
-    self.print_options()
+    #self.print_options()
     self.setup(**doc.options)
     self.validate()
 
