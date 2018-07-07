@@ -62,7 +62,7 @@ class GolfGame(Doc):
       elif dct['type'] == 'tuple[2][2]':
         # tuple : ([int,int], [int,int])
         #print('{} isinstance:{} value:"{}"'.format(dct['type'], type(value), value))
-        dct['value'] = ast.literal_eval(value)
+        dct['value'] = value
       elif dct['type'] == 'tuple[2]':
         # tuple[2] : (int,int)
         #print('{} isinstance:{} value:"{}"'.format(dct['type'], type(value), value))
@@ -150,7 +150,7 @@ class GolfTeam(object):
     self.name = kwargs.get('name')
     self.players = players[:]
     if not self.name:
-      self.name = '/'.join([pl.player.getInitials() for pl in self.players])
+      self.name = '/'.join([pl.getInitials() for pl in self.players])
 
   def setup(self, min_handicap=None):
     pass
