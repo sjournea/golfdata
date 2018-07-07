@@ -205,7 +205,7 @@ class DBMenu(Menu):
     for arg in self.lstCmd[2:]:
       lst = arg.split('=')
       if len(lst) == 2:
-        dct[lst[0]] = lst[1]
+        dct[lst[0]] = eval(lst[1])
 
     # get round
     doc_round = Round.objects(id=self._round_id).first()

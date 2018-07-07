@@ -23,16 +23,17 @@ The bumps will be added to the lowest handicap holes on the course being played.
   }
   def setup(self, **kwargs):
     """Start the game."""
-    self.use_full_net = kwargs.get('use_full_net', False)
+    #self.use_full_net = kwargs.get('use_full_net', False)
     player_class = kwargs.get('player_class', NetPlayer)
     # find min handicap in all players
     if self.use_full_net:
       min_handicap = 0
     else:
       min_handicap = min([result.course_handicap for result in self.golf_round.results])
+    #print('{} use_full_net:{} min_handicap:{}'.format(self.__class__.__name__, self.use_full_net, min_handicap))
     self._players = [player_class(self, result, min_handicap) for result in self.golf_round.results]
     # add header to scorecard
-    self.dctScorecard['header'] = '{0:*^98}'.format(' Net ')
+    self.dctScorecard['header'] = '{0:*^98}'.format(' {} Net '.format('Full' if self.use_full_net else 'Relative'))
     self.dctLeaderboard['hdr'] = 'Pos Name     Net Thru'
 
   def update(self):

@@ -37,7 +37,7 @@ class GolfGame(Doc):
     """Overload to validate a game setup."""
     pass
 
-  def load_game_options(self, **kwargs):
+  def load_game_options(self):
     """setup game options from game_options dictionary."""
     def set_value(dct, value):
       if dct['type'] == 'int':
@@ -71,7 +71,7 @@ class GolfGame(Doc):
     # start here
     #print('kwargs:{}'.format(kwargs))
     for key, dct in self.game_options.items():
-      set_value(dct, kwargs.get(key, dct['default']))
+      set_value(dct, self.options.get(key, dct['default']))
       setattr(self, key, dct['value'])
 
   def print_options(self):
