@@ -8,8 +8,8 @@ from .game_stableford import GameStableford
 from .game_greenie import GameGreenie
 from .game_snake import GameSnake
 from .game_best_ball import GameBestBall
-#from .game_six_point import SqlGameSixPoint
-#from .sql_game_eighty_one import SqlGameEightyOne
+from .game_six_point import GameSixPoint
+from .game_eighty_one import GameEightyOne
 from .game_match import GameMatch
 #from .sql_game_rewards import SqlGameRewards
 
@@ -22,8 +22,8 @@ dctGames = {
   'greenie': GameGreenie,
   'snake': GameSnake,
   'bestball': GameBestBall,
-  #'six_point': SqlGameSixPoint,
-  #'eighty_one': SqlGameEightyOne,
+  'six_point': GameSixPoint,
+  'eighty_one': GameEightyOne,
   'match': GameMatch,
   #'rewards': SqlGameRewards,
 }
