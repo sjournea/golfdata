@@ -294,7 +294,7 @@ class DBMenu(Menu):
       if options:
         for game in gr.games:
           if game.game_type in options:
-            game.hole_data[hole] = options[game.game_type]
+            game.hole_data[str(hole)] = options[game.game_type]
 
      # start here    
     if self._round_id is None:
