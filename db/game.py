@@ -1,4 +1,5 @@
 """ game.py - GolfGame class."""
+import ast
 from .exceptions import GolfException
 from .doc import Doc
 from .dplayer import DPlayer
