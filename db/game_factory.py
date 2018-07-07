@@ -3,7 +3,7 @@ from .exceptions import GolfException
 from .game_gross import GameGross
 from .game_net import GameNet
 #from .sql_game_skins import SqlGameSkins
-#from .sql_game_putts import SqlGamePutts
+from .game_putts import GamePutts
 #from .sql_game_stableford import SqlGameStableford
 #from .sql_game_greenie import SqlGameGreenie
 #from .sql_game_snake import SqlGameSnake
@@ -17,7 +17,7 @@ dctGames = {
   'gross': GameGross,
   'net': GameNet,
   #'skins': SqlGameSkins,
-  #'putts': SqlGamePutts,
+  'putts': GamePutts,
   #'stableford': SqlGameStableford,
   #'greenie': SqlGameGreenie,
   #'snake': SqlGameSnake,
