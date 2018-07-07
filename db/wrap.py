@@ -98,9 +98,6 @@ class DCourse(Doc):
 
 class DResult(Doc):
 
-  #def get_completed_holes(self):
-    #return len(self.scores)
-
   def __str__(self):
     return 'player:{} tee:{} handicap:{} course_handicap:{} scores{}'.format(self.player.nick_name, self.tee, self.handicap, self.course_handicap, self.scores)
 
@@ -150,8 +147,8 @@ class DRound(Doc):
     print('calcCourseHandicap() handicap_type:{} handicap:{} slope:{} course_handicap:{}'.format(handicap_type, player.handicap, slope, course_handicap))
     return course_handicap
 
-  #def get_completed_holes(self):
-    #return max([result.get_completed_holes() for result in self.results])
+  def get_completed_holes(self):
+    return max([len(result.scores) for result in self.results])
 
   def getScorecard(self, ESC=True):
     dct = self.course.getScorecard(ESC=ESC)

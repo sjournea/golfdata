@@ -5,7 +5,7 @@ from .game_net import GameNet
 #from .sql_game_skins import SqlGameSkins
 from .game_putts import GamePutts
 from .game_stableford import GameStableford
-#from .sql_game_greenie import SqlGameGreenie
+from .game_greenie import GameGreenie
 #from .sql_game_snake import SqlGameSnake
 #from .sql_game_best_ball import SqlGameBestBall
 #from .sql_game_six_point import SqlGameSixPoint
@@ -19,7 +19,7 @@ dctGames = {
   #'skins': SqlGameSkins,
   'putts': GamePutts,
   'stableford': GameStableford,
-  #'greenie': SqlGameGreenie,
+  'greenie': GameGreenie,
   #'snake': SqlGameSnake,
   #'bestball': SqlGameBestBall,
   #'six_point': SqlGameSixPoint,

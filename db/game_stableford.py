@@ -107,7 +107,6 @@ Since most people have a hard time shooting double eagles and eagles, golfers of
       dct['bumps'] = sc._bumps
       line = '{:<6}'.format(sc.nick_name)
       for i,(point,bump) in enumerate(zip(sc.dct_points['holes'][:9], sc._bumps[:9])):
-        print('i',i,'point',point,'bump',bump)
         s = '{}'.format(bump*'*')
         s += '' if point is None else '{:d}'.format(point)
         s += 'j' if sc._jokers and (i+1) in sc._jokers else ''
