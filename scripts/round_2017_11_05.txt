@@ -1,0 +1,27 @@
+# create a round and add players scores
+gcr Shoreline 2017-11-05
+gad sjournea White
+# add games
+gag gross
+gag net use_full_net=True
+# start game
+gst 
+pause enable
+gas 1 gross=[8] 
+gas 2 gross=[6]
+gas 3 gross=[5]
+gas 4 gross=[4]
+gas 5 gross=[6]
+gas 6 gross=[6]
+gas 7 gross=[5]
+gas 8 gross=[3]
+gas 9 gross=[6] pause=enable
+gas 10 gross=[7] 
+gas 11 gross=[4]
+gas 12 gross=[7]
+gas 13 gross=[4]
+gas 14 gross=[6]
+gas 15 gross=[5]
+gas 16 gross=[7]
+gas 17 gross=[3]
+gas 18 gross=[4] pause=enable

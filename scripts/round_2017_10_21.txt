@@ -1,0 +1,29 @@
+# create a round and add players scores
+gcr Sunnyvale 2017-10-21
+gad sjournea White
+gad ricky White
+# add games
+gag gross
+gag net
+gag skins use_carryover=False
+# start game
+gst 
+pause enable
+gas 1 gross=[6,8]
+gas 2 gross=[4,4]
+gas 3 gross=[6,7]
+gas 4 gross=[4,5]
+gas 5 gross=[4,5]
+gas 6 gross=[6,5]
+gas 7 gross=[4,4]
+gas 8 gross=[6,7]
+gas 9 gross=[4,5] pause=enable
+gas 10 gross=[5,7]
+gas 11 gross=[6,8]
+gas 12 gross=[4,6]
+gas 13 gross=[4,4]
+gas 14 gross=[5,7]
+gas 15 gross=[5,5]
+gas 16 gross=[4,6]
+gas 17 gross=[4,8]
+gas 18 gross=[6,7]  pause=enable

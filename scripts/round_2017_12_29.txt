@@ -1,0 +1,27 @@
+# create a round and add players scores
+gcr Hillcrest 2017-12-29
+gad sjournea Blue
+# add games
+gag gross
+gag net use_full_net=True 
+# start game
+gst 
+pause enable
+gas 1 gross=[4] putts=[1]
+gas 2 gross=[5] putts=[2]
+gas 3 gross=[4] putts=[2]
+gas 4 gross=[5] putts=[1]
+gas 5 gross=[6] putts=[2]
+gas 6 gross=[4] putts=[2]
+gas 7 gross=[5] putts=[1]
+gas 8 gross=[2] putts=[1]
+gas 9 gross=[4] putts=[2] pause=enable
+gas 10 gross=[6] putts=[3]
+gas 11 gross=[6] putts=[3]
+gas 12 gross=[8] putts=[2]
+gas 13 gross=[6] putts=[2]
+gas 14 gross=[4] putts=[2]
+gas 15 gross=[4] putts=[2]
+gas 16 gross=[6] putts=[2]
+gas 17 gross=[4] putts=[1]
+gas 18 gross=[6] putts=[3] pause=enable

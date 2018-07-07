@@ -1,0 +1,36 @@
+# create a round and add players scores
+gcr Skywest 2018-06-02 handicap_type=simple
+gad sjournea White
+gad snake White
+gad spanky White
+gad reload White
+# add games
+gag gross
+gag net use_full_net=True
+gag putts
+gag stableford stableford_type='British' wager=0.50
+gag greenie wager=1.0
+gag snake snake_type='Hold' wager=1.0
+gag bestball teams=[(0,1),(2,3)]
+#gag rewards wager=2.0
+# start game
+gst 
+pause enable
+gas  1 gross=[6,7,5,6]   putts=[3,2,2,1]
+gas  2 gross=[6,5,5,8]   putts=[3,2,1,2]
+gas  3 gross=[5,5,5,7]   putts=[2,2,2,2]
+gas  4 gross=[6,7,7,8]   putts=[1,2,2,2]
+gas  5 gross=[4,4,4,7]   putts=[2,2,1,2]
+gas  6 gross=[7,5,8,7]   putts=[2,2,2,1]
+gas  7 gross=[5,5,5,5]   putts=[1,3,2,2]
+gas  8 gross=[4,3,3,4]   putts=[3,2,2,2] greenie={'qualified':'Spanky'}
+gas  9 gross=[4,4,6,4]   putts=[2,2,2,0] pause=enable
+gas 10 gross=[5,4,6,6]   putts=[2,1,1,1]
+gas 11 gross=[5,6,8,5]   putts=[2,2,2,1]
+gas 12 gross=[4,3,4,4]   putts=[2,2,3,2] greenie={'qualified':'Snake'}
+gas 13 gross=[5,6,5,7]   putts=[2,2,2,2]
+gas 14 gross=[6,6,4,8]   putts=[2,2,0,1]
+gas 15 gross=[8,8,5,6]   putts=[3,3,3,2] snake={'closest_3_putt':'Snake'}
+gas 16 gross=[4,6,3,4]   putts=[3,2,1,2]
+gas 17 gross=[6,6,6,7]   putts=[1,1,2,2]
+gas 18 gross=[4,5,5,5]   putts=[1,2,2,2] pause=enable

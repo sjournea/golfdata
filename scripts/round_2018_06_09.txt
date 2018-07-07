@@ -1,0 +1,30 @@
+# create a round and add players scores
+gcr Cameron 2018-06-09
+gad sjournea "3 Pines"
+gad ricky "3 Pines"
+# add games
+gag gross
+gag net use_full_net=True
+gag putts
+gag skins use_carryover=False
+# start game
+gst
+pause enable
+gas  2 gross=[5,4]   putts=[3,1]
+gas  3 gross=[3,7]   putts=[1,2]
+gas  4 gross=[6,5]   putts=[1,3]
+gas  5 gross=[6,6]   putts=[2,2]
+gas  6 gross=[6,9]   putts=[2,2]
+gas  7 gross=[6,5]   putts=[2,3]
+gas  8 gross=[3,4]   putts=[1,2]
+gas  9 gross=[8,4]   putts=[3,1] pause=enable
+gas 10 gross=[5,5]   putts=[3,2]
+gas 11 gross=[6,7]   putts=[2,2]
+gas 12 gross=[6,5]   putts=[2,2]
+gas 13 gross=[6,7]   putts=[2,2]
+gas 14 gross=[6,5]   putts=[1,1]
+gas 15 gross=[7,6]   putts=[2,2]
+gas 16 gross=[3,4]   putts=[2,3]
+gas 17 gross=[7,5]   putts=[2,1]
+gas 18 gross=[5,4]   putts=[2,2] pause=enable
+gas  1 gross=[4,5]   putts=[2,2] pause=enable
