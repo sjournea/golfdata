@@ -1,0 +1,31 @@
+# create a round and add players scores
+gcr Skywest 2017-08-05 handicap_type=simple
+gad sjournea Blue
+gad snake Blue
+gad spanky Blue
+gad reload Blue
+# add games
+gag gross
+gag net use_full_net=True
+gag skins
+# start game
+gst
+pause enable
+gas 1 gross=[7,6,7,8]
+gas 2 gross=[4,7,6,5]
+gas 3 gross=[6,4,5,7]
+gas 4 gross=[7,6,7,6]
+gas 5 gross=[4,4,4,5]
+gas 6 gross=[5,7,5,6]
+gas 7 gross=[6,5,5,5]
+gas 8 gross=[4,3,3,5]
+gas 9 gross=[5,6,5,6] pause=enable
+gas 10 gross=[5,5,6,4]
+gas 11 gross=[5,4,5,7]
+gas 12 gross=[5,3,4,4]
+gas 13 gross=[5,7,5,7]
+gas 14 gross=[6,6,5,7]
+gas 15 gross=[4,5,5,5]
+gas 16 gross=[4,4,4,5]
+gas 17 gross=[5,6,6,6]
+gas 18 gross=[5,4,5,7] pause=enable

@@ -1,0 +1,28 @@
+# create a round and add players scores
+gcr Callippe 2018-03-31
+gad sjournea White
+# add games
+gag gross
+gag net use_full_net=True
+gag putts
+# start game
+gst 
+pause enable
+gas  1 gross=[5]   putts=[2]
+gas  2 gross=[4]   putts=[1]
+gas  3 gross=[5]   putts=[2]
+gas  4 gross=[4]   putts=[2]
+gas  5 gross=[7]   putts=[3]
+gas  6 gross=[3]   putts=[2]
+gas  7 gross=[6]   putts=[2]
+gas  8 gross=[4]   putts=[2]
+gas  9 gross=[10]   putts=[2] pause=enable
+gas 10 gross=[7]   putts=[1]
+gas 11 gross=[4]   putts=[1]
+gas 12 gross=[7]   putts=[3]
+gas 13 gross=[5]   putts=[4]
+gas 14 gross=[5]   putts=[3]
+gas 15 gross=[5]   putts=[3]
+gas 16 gross=[5]   putts=[2]
+gas 17 gross=[8]   putts=[2]
+gas 18 gross=[6]   putts=[2] pause=enable

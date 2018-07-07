@@ -1,0 +1,32 @@
+# create a round and add players scores
+gcr "Canyon Lakes" 2017-03-04 handicap_type=simple
+gad sjournea Blue
+gad snake Blue
+gad spanky Blue
+gad reload Blue
+# add games
+gag gross
+gag net
+gag skins
+gag bestball teams=[(0,3),(1,2)]
+# start game
+gst
+pause enable
+gas 1 gross=[4,5,6,5]
+gas 2 gross=[8,6,5,8]
+gas 3 gross=[3,4,6,4]
+gas 4 gross=[6,5,6,7]
+gas 5 gross=[3,5,4,4]
+gas 6 gross=[5,4,4,4]
+gas 7 gross=[5,6,6,7]
+gas 8 gross=[6,5,4,6]
+gas 9 gross=[6,5,6,7] pause=enable
+gas 10 gross=[5,3,3,4]
+gas 11 gross=[4,4,5,6]
+gas 12 gross=[6,4,3,6]
+gas 13 gross=[4,3,3,4]
+gas 14 gross=[8,5,6,8]
+gas 15 gross=[4,4,4,4]
+gas 16 gross=[6,5,5,6]
+gas 17 gross=[7,6,6,6]
+gas 18 gross=[4,6,5,6] pause=enable

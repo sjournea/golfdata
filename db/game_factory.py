@@ -2,29 +2,29 @@
 from .exceptions import GolfException
 from .game_gross import GameGross
 from .game_net import GameNet
-#from .sql_game_skins import SqlGameSkins
-#from .sql_game_putts import SqlGamePutts
-#from .sql_game_stableford import SqlGameStableford
-#from .sql_game_greenie import SqlGameGreenie
-#from .sql_game_snake import SqlGameSnake
-#from .sql_game_best_ball import SqlGameBestBall
-#from .sql_game_six_point import SqlGameSixPoint
-#from .sql_game_eighty_one import SqlGameEightyOne
-#from .sql_game_match import SqlGameMatch
+from .game_skins import GameSkins
+from .game_putts import GamePutts
+from .game_stableford import GameStableford
+from .game_greenie import GameGreenie
+from .game_snake import GameSnake
+from .game_best_ball import GameBestBall
+from .game_six_point import GameSixPoint
+from .game_eighty_one import GameEightyOne
+from .game_match import GameMatch
 #from .sql_game_rewards import SqlGameRewards
 
 dctGames = { 
   'gross': GameGross,
   'net': GameNet,
-  #'skins': SqlGameSkins,
-  #'putts': SqlGamePutts,
-  #'stableford': SqlGameStableford,
-  #'greenie': SqlGameGreenie,
-  #'snake': SqlGameSnake,
-  #'bestball': SqlGameBestBall,
-  #'six_point': SqlGameSixPoint,
-  #'eighty_one': SqlGameEightyOne,
-  #'match': SqlGameMatch,
+  'skins': GameSkins,
+  'putts': GamePutts,
+  'stableford': GameStableford,
+  'greenie': GameGreenie,
+  'snake': GameSnake,
+  'bestball': GameBestBall,
+  'six_point': GameSixPoint,
+  'eighty_one': GameEightyOne,
+  'match': GameMatch,
   #'rewards': SqlGameRewards,
 }
 

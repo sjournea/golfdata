@@ -13,11 +13,13 @@ from util.tl_logger import TLLog,logOptions
 
 from mongoengine import *
 from db.db_mongoengine import Player, Course, Tee, Hole, Round, Result, Game, Score
-from db.wrap import DPlayer, DCourse, DRound, DResult
+from db.dplayer import DPlayer
+from db.wrap import DCourse, DRound, DResult
 from db.db_mongoengine import Database, DBAdmin
 from db.data.test_players import DBGolfPlayers
 from db.data.test_courses import DBGolfCourses
 from db.game_factory import GolfGameFactory
+from db.exceptions import GolfGameException
 
 TLLog.config('logs/dbmain.log', defLogLevel=logging.INFO )
 
@@ -204,7 +206,7 @@ class DBMenu(Menu):
     for arg in self.lstCmd[2:]:
       lst = arg.split('=')
       if len(lst) == 2:
-        dct[lst[0]] = lst[1]
+        dct[lst[0]] = eval(lst[1])
 
     # get round
     doc_round = Round.objects(id=self._round_id).first()
@@ -293,7 +295,7 @@ class DBMenu(Menu):
       if options:
         for game in gr.games:
           if game.game_type in options:
-            game.hole_data[hole] = options[game.game_type]
+            game.hole_data[str(hole)] = options[game.game_type]
 
      # start here    
     if self._round_id is None:
@@ -324,28 +326,28 @@ class DBMenu(Menu):
     addScore(doc_round)
 
     golf_round = DRound(doc_round)
-    golf_round.update_games()
+    # Validate all games have enough information.
+    # TODO: This only resolves one at a time. Should return all at once.
+    while True:
+      try:
+        golf_round.update_games()
+        break
+      except GolfGameException as ex:
+        dct = ex.dct
+        print('{} Game - {} - {}'.format(dct['game'].short_description, dct['msg'], ','.join([pl.nick_name for pl in dct['players']])))
+        prompt = '{} Game - {} - {} : '.format(
+          dct['game'].short_description,
+          dct['msg'],
+          ','.join(['{} : {}'.format(n, pl.nick_name) for n,pl in enumerate(dct['players'])]))
+    
+        i = input(prompt)
+        if i == 'x':
+          raise Exception('Abort by user')
+        i = int(i)
+        dct['hole_data'].update({ str(dct['hole_num']) : {dct['key'] : dct['players'][i].nick_name }})
+        golf_round.save()
+    
     golf_round.save()
-    #lst_game_more_info_needed = []
-    #golf_round = session.query(Round).filter(Round.round_id == self._round_id).one()
-    #for game in golf_round.games:
-      #try:
-        #game.CreateGame()
-      #except GolfGameException as ex:
-        #print('{} Game - {} - {}'.format(ex.dct['game'].short_description, ex.dct['msg'], ','.join([pl.nick_name for pl in ex.dct['players']])))
-        #lst_game_more_info_needed.append(ex)
-      
-    #if lst_game_more_info_needed:
-      #for ex in lst_game_more_info_needed:
-        #prompt = '{} Game - {} - {} : '.format(ex.dct['game'].short_description, ex.dct['msg'], ','.join(['{} : {}'.format(n, pl.nick_name) for n,pl in enumerate(ex.dct['players'])]))
-        
-        #i = raw_input(prompt)
-        #if i == 'x':
-          #raise Exception('Abort by user')
-        #i = int(i)
-        #game = session.query(Game).filter(Game.game_id == ex.dct['game'].game.game_id).one()
-        #game.add_hole_dict_data(ex.dct['hole_num'], {ex.dct['key'] : ex.dct['players'][i].nick_name})
-        #session.commit()
 
     self._roundDump(golf_round)
     self.pushCommands([pause_command])

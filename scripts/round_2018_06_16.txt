@@ -1,0 +1,38 @@
+# create a round and add players scores
+gcr Monarch 2018-06-16 handicap_type=simple
+gad sjournea Member
+gad snake Member
+gad spanky Member
+gad reload Member
+# add games
+gag gross
+gag net use_full_net=True
+gag putts
+gag stableford stableford_type='British' wager=0.50
+gag greenie wager=1.0
+gag snake snake_type='Hold' wager=1.0
+gag bestball teams=[(0,1),(2,3)]
+#gag rewards wager=2.0
+# start game
+#   greenie={'qualified':'Spanky'}  
+#   snake={'closest_3_putt':'Snake'}
+gst 
+pause enable
+gas  1 gross=[4,5,6,5]   putts=[1,2,3,1]
+gas  2 gross=[5,5,7,5]   putts=[1,2,2,2]
+gas  3 gross=[8,7,5,6]   putts=[2,1,2,2]
+gas  4 gross=[3,5,4,6]   putts=[1,2,2,2]
+gas  5 gross=[7,7,6,8]   putts=[3,2,2,2]
+gas  6 gross=[5,4,5,5]   putts=[3,2,2,1]
+gas  7 gross=[4,3,3,3]   putts=[2,2,2,2] greenie={'qualified':'Spanky'}
+gas  8 gross=[4,3,5,6]   putts=[2,1,2,2]
+gas  9 gross=[7,5,5,6]   putts=[3,2,2,3] snake={'closest_3_putt':'Hammy'} pause=enable
+gas 10 gross=[5,3,3,5]   putts=[3,2,2,2] greenie={'qualified':'Spanky'}
+gas 11 gross=[4,6,5,8]   putts=[2,4,2,2]
+gas 12 gross=[10,5,5,5]   putts=[2,2,2,2]
+gas 13 gross=[8,5,7,8]   putts=[2,2,1,2]
+gas 14 gross=[5,6,5,6]   putts=[1,2,1,3]
+gas 15 gross=[5,5,4,7]   putts=[1,2,2,1]
+gas 16 gross=[6,8,5,8]   putts=[1,2,2,3]
+gas 17 gross=[6,5,2,4]   putts=[2,2,1,2]
+gas 18 gross=[4,5,4,4]   putts=[2,2,1,2] pause=enable

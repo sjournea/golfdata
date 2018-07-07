@@ -1,6 +1,8 @@
 """ game.py - GolfGame class."""
+import ast
 from .exceptions import GolfException
 from .doc import Doc
+from .dplayer import DPlayer
 from util.tl_logger import TLLog
 
 log = TLLog.getLogger('game')
@@ -28,7 +30,7 @@ class GolfGame(Doc):
     # set game options
     self.load_game_options()
     # setup and validate
-    self.print_options()
+    #self.print_options()
     self.setup(**doc.options)
     self.validate()
 
@@ -36,7 +38,7 @@ class GolfGame(Doc):
     """Overload to validate a game setup."""
     pass
 
-  def load_game_options(self, **kwargs):
+  def load_game_options(self):
     """setup game options from game_options dictionary."""
     def set_value(dct, value):
       if dct['type'] == 'int':
@@ -60,7 +62,7 @@ class GolfGame(Doc):
       elif dct['type'] == 'tuple[2][2]':
         # tuple : ([int,int], [int,int])
         #print('{} isinstance:{} value:"{}"'.format(dct['type'], type(value), value))
-        dct['value'] = ast.literal_eval(value)
+        dct['value'] = value
       elif dct['type'] == 'tuple[2]':
         # tuple[2] : (int,int)
         #print('{} isinstance:{} value:"{}"'.format(dct['type'], type(value), value))
@@ -70,7 +72,7 @@ class GolfGame(Doc):
     # start here
     #print('kwargs:{}'.format(kwargs))
     for key, dct in self.game_options.items():
-      set_value(dct, kwargs.get(key, dct['default']))
+      set_value(dct, self.options.get(key, dct['default']))
       setattr(self, key, dct['value'])
 
   def print_options(self):
@@ -106,24 +108,12 @@ class GolfGame(Doc):
     return '{} options:{} leaderboard:{} scorecard:{} status:{}'.format(
       self.__class__.__name__, self.options, self.leaderboard, self.scorecard, self.status)
 
-class GamePlayer(Doc):
-  # TODO: Should inherit from DPlayer
+class GamePlayer(DPlayer):
   def __init__(self, game, result):
     super().__init__(result.player)
     self.game = game
     self.result = result
 
-  def getFullName(self):
-    return '{} {}'.format(self.first_name, self.last_name)
-
-  def getInitials(self):
-    return self.first_name[0] + self.last_name[0]
-  
-  dct_plural_gender = {'man': 'mens', 'woman': 'womens'}
-  @property
-  def genderPlural(self):
-    return self.dct_plural_gender[self.gender]
-  
   def _init_dict(self, score_type=int):
     """Create and initialize scoring dictionary.
 
@@ -160,7 +150,7 @@ class GolfTeam(object):
     self.name = kwargs.get('name')
     self.players = players[:]
     if not self.name:
-      self.name = '/'.join([pl.player.getInitials() for pl in self.players])
+      self.name = '/'.join([pl.getInitials() for pl in self.players])
 
   def setup(self, min_handicap=None):
     pass

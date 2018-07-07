@@ -2,22 +2,6 @@
 from .doc import Doc
 from .game_factory import GolfGameFactory
 
-class DPlayer(Doc):
-  def getFullName(self):
-    return '{} {}'.format(self.first_name, self.last_name)
-
-  def getInitials(self):
-    return self.first_name[0] + self.last_name[0]
-  
-  dct_plural_gender = {'man': 'mens', 'woman': 'womens'}
-  @property
-  def genderPlural(self):
-    return self.dct_plural_gender[self.gender]
-  
-  def __str__(self):
-    return '{:<15} - {:<6} {:<10} {:<8} {:<5} handicap {:.1f}'.format(
-        self.email, self.first_name, self.last_name, self.nick_name, self.gender, self.handicap)
-
 class DCourse(Doc):
   def setStats(self):
     """Par totals."""
@@ -114,36 +98,8 @@ class DCourse(Doc):
 
 class DResult(Doc):
 
-  #def get_completed_holes(self):
-    #return len(self.scores)
-
   def __str__(self):
     return 'player:{} tee:{} handicap:{} course_handicap:{} scores{}'.format(self.player.nick_name, self.tee, self.handicap, self.course_handicap, self.scores)
-
-#class DGame(Doc):
-  #def __init__(self, doc):
-    #super().__init__(doc)
-    
-    
-  #def CreateGame(self):
-    #game_class = SqlGolfGameFactory(self.game_type)
-    #game = game_class(self, self.round, **self._game_data['options'])
-    #game.validate()
-    #game.update()
-    #return game
-
-  #@property
-  #def game_data(self):
-    #return ast.literal_eval(self.dict_data)
-  
-  #@game_data.setter
-  #def game_data(self, value):
-    #self.dict_data = str(value)
-    
-  #def add_hole_dict_data(self, hole_num, dct_data):
-    #dct = self.game_data
-    #dct[hole_num] = dct_data
-    #self.game_data = dct
 
 class DRound(Doc):
   OPTIONS = {
@@ -191,8 +147,8 @@ class DRound(Doc):
     print('calcCourseHandicap() handicap_type:{} handicap:{} slope:{} course_handicap:{}'.format(handicap_type, player.handicap, slope, course_handicap))
     return course_handicap
 
-  #def get_completed_holes(self):
-    #return max([result.get_completed_holes() for result in self.results])
+  def get_completed_holes(self):
+    return max([len(result.scores) for result in self.results])
 
   def getScorecard(self, ESC=True):
     dct = self.course.getScorecard(ESC=ESC)
